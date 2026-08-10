@@ -1,0 +1,7 @@
+server: {host: 127.0.0.1, port: 8000, api_key: ""}
+storage: {data_dir: /tmp/cam-demo, quota_gb: 1, segment_time_s: 5, autostart: true}
+encoder: libx264
+mock: true
+cameras:
+  - {id: 1, name: CAM01, device: /dev/video0, width: 1280, height: 720, fps: 30, input_format: mjpeg, bitrate_kbps: 2000, gop: 60}
+  - {id: 2, name: CAM02, device: /dev/video1, width: 640, height: 360, fps: 30, input_format: mjpeg, bitrate_kbps: 1200, gop: 60}

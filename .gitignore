@@ -1,0 +1,13 @@
+.DS_Store
+__pycache__/
+*.pyc
+.venv/
+*.pdf
+camera-recorder/.venv/
+camera-recorder/config.yaml
+camera-recorder/logs/
+camera_cpp/build/
+camera_cpp/config.ini
+camera_cpp/config.json
+camera_cpp/config.*.json
+camera_cpp/config.*.ini

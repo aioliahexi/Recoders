@@ -1,0 +1,38 @@
+# ============ 摄像机录像系统示例配置 ============
+# 复制为 config.yaml 后按实际修改
+
+server:
+  host: 0.0.0.0
+  port: 8000
+  api_key: ""            # 留空=关闭鉴权；建议生产环境设置，如 "change-me"
+
+storage:
+  data_dir: /data        # 录像/照片/数据库根目录（建议独立 NVMe 挂载）
+  quota_gb: 2000         # 录像配额(GB)，超过后循环删除最旧录像
+  segment_time_s: 300    # 每个 MP4 段时长（秒）
+  autostart: false       # 服务启动时是否自动开始录像
+
+encoder: auto            # auto=优先 h264_rkmpp(RK 硬件编码)，否则 libx264；也可直接指定 h264_rkmpp / libx264
+mock: false              # true=用 ffmpeg testsrc 模拟摄像头（无硬件也能本地调试 API）
+
+cameras:
+  - id: 1
+    name: CAM01
+    device: /dev/video0  # USB 摄像头设备（udev 固定名，如 /dev/cam01）
+    width: 1280
+    height: 720
+    fps: 30
+    input_format: mjpeg  # mjpeg / h264（相机直出）/ yuy2
+    bitrate_kbps: 2000   # 录像码率
+    gop: 60              # 关键帧间隔（帧数）
+    enabled: true
+  - id: 2
+    name: CAM02
+    device: /dev/video1
+    width: 1280
+    height: 720
+    fps: 30
+    input_format: mjpeg
+    bitrate_kbps: 2000
+    gop: 60
+    enabled: true

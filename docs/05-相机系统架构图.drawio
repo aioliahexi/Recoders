@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" agent="Codex" version="24.0.0" type="device">
+  <diagram id="jetson-cam-arch" name="Jetson Xavier NX 相机系统架构图">
+    <mxGraphModel dx="0" dy="0" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1580" pageHeight="1000" math="0" shadow="0">
+      <root>
+<mxCell id="0" />
+<mxCell id="1" parent="0" />
+<mxCell id="title" value="Jetson Xavier NX 相机系统架构图" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=22;fontStyle=1;fontColor=#333333;" parent="1" vertex="1">
+  <mxGeometry x="40" y="24" width="900" height="44" as="geometry" />
+</mxCell>
+<mxCell id="cam-group" value="USB 摄像头 ×4" style="rounded=1;whiteSpace=wrap;html=1;swimlane;fontStyle=1;startSize=30;fillColor=#6c8ebf;swimlaneFillColor=#f7f9fc;strokeColor=#6c8ebf;fontColor=#ffffff;fontSize=15;" parent="1" vertex="1">
+  <mxGeometry x="30" y="100" width="230" height="640" as="geometry" />
+</mxCell>
+<mxCell id="cam1" value="USB Camera 1&#10;1080p30 UVC" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#333333;fontSize=13;align=center;verticalAlign=middle;" parent="cam-group" vertex="1">
+  <mxGeometry x="25.0" y="70.0" width="180" height="95" as="geometry" />
+</mxCell>
+<mxCell id="cam2" value="USB Camera 2&#10;1080p30 UVC" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#333333;fontSize=13;align=center;verticalAlign=middle;" parent="cam-group" vertex="1">
+  <mxGeometry x="25.0" y="185.0" width="180" height="95" as="geometry" />
+</mxCell>
+<mxCell id="cam3" value="USB Camera 3&#10;1080p30 UVC" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#333333;fontSize=13;align=center;verticalAlign=middle;" parent="cam-group" vertex="1">
+  <mxGeometry x="25.0" y="300.0" width="180" height="95" as="geometry" />
+</mxCell>
+<mxCell id="cam4" value="USB Camera 4&#10;1080p30 UVC" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#333333;fontSize=13;align=center;verticalAlign=middle;" parent="cam-group" vertex="1">
+  <mxGeometry x="25.0" y="415.0" width="180" height="95" as="geometry" />
+</mxCell>
+<mxCell id="hub" value="USB3.0 Hub&#10;（主动供电 4 口）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontColor=#333333;fontSize=13;align=center;verticalAlign=middle;" parent="1" vertex="1">
+  <mxGeometry x="330" y="380" width="170" height="90" as="geometry" />
+</mxCell>
+<mxCell id="jetson" value="Jetson Xavier NX（设备端 · Ubuntu 20.04 · JetPack 5.1.3）" style="rounded=1;whiteSpace=wrap;html=1;swimlane;fontStyle=1;startSize=30;fillColor=#9673a6;swimlaneFillColor=#faf8fc;strokeColor=#9673a6;fontColor=#ffffff;fontSize=15;" parent="1" vertex="1">
+  <mxGeometry x="570" y="100" width="600" height="700" as="geometry" />
+</mxCell>
+<mxCell id="hw" value="硬件平台&#10;6× Carmel CPU · 384 CUDA 核 · 8GB LPDDR4x&#10;NVIDIA H.264/H.265 硬件编码器（nvv4l2h264enc）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontColor=#333333;fontSize=12;align=center;verticalAlign=middle;" parent="jetson" vertex="1">
+  <mxGeometry x="25.0" y="80.0" width="550" height="80" as="geometry" />
+</mxCell>
+<mxCell id="capture" value="采集层：V4L2（uvcvideo）· 4 路 /dev/videoN" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#333333;fontSize=13;align=center;verticalAlign=middle;" parent="jetson" vertex="1">
+  <mxGeometry x="25.0" y="185.0" width="550" height="60" as="geometry" />
+</mxCell>
+<mxCell id="media" value="媒体处理层（GStreamer，每路独立进程）&#10;v4l2src → jpegdec → nvvidconv → nvv4l2h264enc → mp4mux" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontColor=#333333;fontSize=13;align=center;verticalAlign=middle;" parent="jetson" vertex="1">
+  <mxGeometry x="25.0" y="270.0" width="550" height="85" as="geometry" />
+</mxCell>
+<mxCell id="app" value="应用层&#10;录像服务 · 抓拍服务（nvjpeg）· 存储管理（配额 / 循环覆盖）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontColor=#333333;fontSize=13;align=center;verticalAlign=middle;" parent="jetson" vertex="1">
+  <mxGeometry x="25.0" y="380.0" width="550" height="85" as="geometry" />
+</mxCell>
+<mxCell id="api" value="API 服务层：FastAPI + uvicorn（HTTP / JSON）· /api/*" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontColor=#333333;fontSize=13;align=center;verticalAlign=middle;" parent="jetson" vertex="1">
+  <mxGeometry x="25.0" y="490.0" width="550" height="70" as="geometry" />
+</mxCell>
+<mxCell id="web" value="Web 配置界面（内嵌页面）&#10;通道管理 · 录像 / 抓拍参数 · 存储状态" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d4e1f5;strokeColor=#5b7db1;fontColor=#333333;fontSize=13;align=center;verticalAlign=middle;" parent="jetson" vertex="1">
+  <mxGeometry x="25.0" y="585.0" width="550" height="80" as="geometry" />
+</mxCell>
+<mxCell id="storage" value="本地存储（NVMe SSD）" style="rounded=1;whiteSpace=wrap;html=1;swimlane;fontStyle=1;startSize=30;fillColor=#d79b00;swimlaneFillColor=#fdf9f3;strokeColor=#d79b00;fontColor=#ffffff;fontSize=15;" parent="1" vertex="1">
+  <mxGeometry x="1230" y="100" width="300" height="700" as="geometry" />
+</mxCell>
+<mxCell id="ssd" value="NVMe SSD（M.2）&#10;/dev/nvme0n1 · /data 分区" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontColor=#333333;fontSize=13;align=center;verticalAlign=middle;" parent="storage" vertex="1">
+  <mxGeometry x="25.0" y="70.0" width="250" height="70" as="geometry" />
+</mxCell>
+<mxCell id="recordings" value="视频文件（MP4 分段）&#10;/data/recordings/CAMxx/&#10;YYYYMMDD/HHMMSS.mp4" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#333333;fontSize=13;align=center;verticalAlign=middle;" parent="storage" vertex="1">
+  <mxGeometry x="25.0" y="180.0" width="250" height="120" as="geometry" />
+</mxCell>
+<mxCell id="photos" value="照片文件（JPEG）&#10;/data/photos/CAMxx/&#10;YYYYMMDD/HHMMSS.jpg" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#333333;fontSize=13;align=center;verticalAlign=middle;" parent="storage" vertex="1">
+  <mxGeometry x="25.0" y="340.0" width="250" height="120" as="geometry" />
+</mxCell>
+<mxCell id="meta" value="元数据索引&#10;SQLite：/data/meta.db&#10;相机 · 起止时间 · 时长 · 大小 · 事件标签" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontColor=#333333;fontSize=13;align=center;verticalAlign=middle;" parent="storage" vertex="1">
+  <mxGeometry x="25.0" y="500.0" width="250" height="120" as="geometry" />
+</mxCell>
+<mxCell id="clients" value="外部访问" style="rounded=1;whiteSpace=wrap;html=1;swimlane;fontStyle=1;startSize=30;fillColor=#5b7db1;swimlaneFillColor=#f5f8fc;strokeColor=#5b7db1;fontColor=#ffffff;fontSize=15;" parent="1" vertex="1">
+  <mxGeometry x="570" y="840" width="960" height="110" as="geometry" />
+</mxCell>
+<mxCell id="browser" value="Web 浏览器&#10;设备配置与管理" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d4e1f5;strokeColor=#5b7db1;fontColor=#333333;fontSize=13;align=center;verticalAlign=middle;" parent="clients" vertex="1">
+  <mxGeometry x="50.0" y="45.0" width="270" height="60" as="geometry" />
+</mxCell>
+<mxCell id="rest" value="上位机 / 云端&#10;RESTful 调用（HTTP / JSON）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#333333;fontSize=13;align=center;verticalAlign=middle;" parent="clients" vertex="1">
+  <mxGeometry x="410.0" y="45.0" width="270" height="60" as="geometry" />
+</mxCell>
+<mxCell id="e1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1.0000;exitY=0.5000;entryX=0.0000;entryY=0.2000;endArrow=block;startArrow=none;strokeColor=#999999;fontSize=11;fontColor=#666666;" parent="1" edge="1" source="cam1" target="hub">
+  <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="282" y="217.5" /><mxPoint x="282" y="398" /></Array></mxGeometry>
+</mxCell>
+<mxCell id="e2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1.0000;exitY=0.5000;entryX=0.0000;entryY=0.4000;endArrow=block;startArrow=none;strokeColor=#999999;fontSize=11;fontColor=#666666;" parent="1" edge="1" source="cam2" target="hub">
+  <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="282" y="332.5" /><mxPoint x="282" y="416" /></Array></mxGeometry>
+</mxCell>
+<mxCell id="e3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1.0000;exitY=0.5000;entryX=0.0000;entryY=0.6000;endArrow=block;startArrow=none;strokeColor=#999999;fontSize=11;fontColor=#666666;" parent="1" edge="1" source="cam3" target="hub">
+  <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="282" y="447.5" /><mxPoint x="282" y="434" /></Array></mxGeometry>
+</mxCell>
+<mxCell id="e4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1.0000;exitY=0.5000;entryX=0.0000;entryY=0.8000;endArrow=block;startArrow=none;strokeColor=#999999;fontSize=11;fontColor=#666666;" parent="1" edge="1" source="cam4" target="hub">
+  <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="282" y="562.5" /><mxPoint x="282" y="452" /></Array></mxGeometry>
+</mxCell>
+<mxCell id="e5" value="USB 3.1（4×USB-A）" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1.0000;exitY=0.5000;entryX=0.0000;entryY=0.5000;endArrow=block;startArrow=none;strokeColor=#999999;fontSize=11;fontColor=#666666;" parent="1" edge="1" source="hub" target="capture">
+  <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="547" y="425" /><mxPoint x="547" y="315" /></Array><mxPoint x="0" y="-10" as="offset" /></mxGeometry>
+</mxCell>
+<mxCell id="e6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5000;exitY=1.0000;entryX=0.5000;entryY=0.0000;endArrow=block;startArrow=none;strokeColor=#999999;fontSize=11;fontColor=#666666;" parent="1" edge="1" source="hw" target="capture">
+  <mxGeometry relative="1" as="geometry"></mxGeometry>
+</mxCell>
+<mxCell id="e7" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5000;exitY=1.0000;entryX=0.5000;entryY=0.0000;endArrow=block;startArrow=none;strokeColor=#999999;fontSize=11;fontColor=#666666;" parent="1" edge="1" source="capture" target="media">
+  <mxGeometry relative="1" as="geometry"></mxGeometry>
+</mxCell>
+<mxCell id="e8" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5000;exitY=1.0000;entryX=0.5000;entryY=0.0000;endArrow=block;startArrow=none;strokeColor=#999999;fontSize=11;fontColor=#666666;" parent="1" edge="1" source="media" target="app">
+  <mxGeometry relative="1" as="geometry"></mxGeometry>
+</mxCell>
+<mxCell id="e9" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5000;exitY=1.0000;entryX=0.5000;entryY=0.0000;endArrow=block;startArrow=none;strokeColor=#999999;fontSize=11;fontColor=#666666;" parent="1" edge="1" source="app" target="api">
+  <mxGeometry relative="1" as="geometry"></mxGeometry>
+</mxCell>
+<mxCell id="e10" value="HTTP 调用" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5000;exitY=1.0000;entryX=0.5000;entryY=0.0000;endArrow=block;startArrow=none;strokeColor=#999999;fontSize=11;fontColor=#666666;" parent="1" edge="1" source="api" target="web">
+  <mxGeometry relative="1" as="geometry"><mxPoint x="10" y="0" as="offset" /></mxGeometry>
+</mxCell>
+<mxCell id="e11" value="写入 视频 / 照片 / 元数据" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1.0000;exitY=0.5000;entryX=0.0000;entryY=0.4571;endArrow=block;startArrow=none;strokeColor=#999999;fontSize=11;fontColor=#666666;" parent="1" edge="1" source="app" target="storage">
+  <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1212" y="522.5" /><mxPoint x="1212" y="420" /></Array><mxPoint x="12" y="0" as="offset" /></mxGeometry>
+</mxCell>
+<mxCell id="e12" value="查询 / 检索" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.0000;exitY=0.5000;entryX=1.0000;entryY=0.5000;endArrow=block;startArrow=none;strokeColor=#999999;fontSize=11;fontColor=#666666;" parent="1" edge="1" source="meta" target="api">
+  <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1212" y="660" /><mxPoint x="1212" y="625" /></Array><mxPoint x="-12" y="0" as="offset" /></mxGeometry>
+</mxCell>
+<mxCell id="e13" value="HTTP（浏览器访问）" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5000;exitY=0.0000;entryX=0.5000;entryY=1.0000;endArrow=block;startArrow=none;strokeColor=#999999;fontSize=11;fontColor=#666666;" parent="1" edge="1" source="browser" target="web">
+  <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="755" y="810" /><mxPoint x="870" y="810" /></Array><mxPoint x="0" y="-10" as="offset" /></mxGeometry>
+</mxCell>
+<mxCell id="e14" value="HTTPS / REST · JSON" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5000;exitY=0.0000;entryX=0.5000;entryY=1.0000;endArrow=block;startArrow=none;strokeColor=#999999;fontSize=11;fontColor=#666666;" parent="1" edge="1" source="rest" target="api">
+  <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1115" y="830" /><mxPoint x="870" y="830" /></Array><mxPoint x="0" y="-10" as="offset" /></mxGeometry>
+</mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

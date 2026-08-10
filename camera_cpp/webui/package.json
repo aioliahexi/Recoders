@@ -1,0 +1,8 @@
+{
+  "name": "camera-web",
+  "version": "1.0.0",
+  "description": "camera_server NVR Web 管理面（Node.js 零依赖）",
+  "main": "server.js",
+  "scripts": { "start": "node server.js" },
+  "license": "MIT"
+}

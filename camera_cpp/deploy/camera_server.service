@@ -1,0 +1,20 @@
+# camera_server systemd 单元
+# 部署：sed 's|/opt/camera_server|<安装目录>|g' 后放入 /etc/systemd/system/
+[Unit]
+Description=Camera Server (C++) - Recording + ONVIF + RTSP + REST
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/camera_server
+ExecStart=/opt/camera_server/build/camera_server --config /opt/camera_server/config.json
+Restart=always
+RestartSec=3
+TimeoutStopSec=30
+LimitNOFILE=65536
+# 12 路时按需调整
+# CPUQuota=100%
+
+[Install]
+WantedBy=multi-user.target

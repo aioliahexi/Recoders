@@ -1,0 +1,50 @@
+{
+  "data_dir": "/data/camera",
+  "quota_mb": 200000,
+  "segment_time_s": 60,
+  "encoder": "auto",
+  "http_port": 8000,
+  "rtsp_port": 8554,
+  "api_key": "change-me",
+  "host_ip": "",
+  "autostart": true,
+  "onvif_enabled": true,
+  "onvif_discovery": true,
+  "nvr_name": "camera_server NVR",
+  "rest_public": false,
+  "cameras": [
+    {
+      "id": 1,
+      "uuid": "",
+      "name": "CAM01",
+      "device": "/dev/video0",
+      "mock": false,
+      "width": 1280,
+      "height": 720,
+      "fps": 30,
+      "input_format": "mjpeg",
+      "bitrate_kbps": 2000,
+      "gop": 60,
+      "capture": "auto",
+      "osd": true,
+      "enabled": true
+    },
+
+    {
+      "id": 2,
+      "uuid": "",
+      "name": "CAM02",
+      "device": "/dev/video1",
+      "mock": false,
+      "width": 1280,
+      "height": 720,
+      "fps": 30,
+      "input_format": "mjpeg",
+      "bitrate_kbps": 2000,
+      "gop": 60,
+      "capture": "auto",
+      "osd": true,
+      "enabled": true
+    }
+  ]
+}

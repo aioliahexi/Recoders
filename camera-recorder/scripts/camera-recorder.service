@@ -1,0 +1,18 @@
+# 安装：sudo cp camera-recorder.service /etc/systemd/system/ && sudo systemctl daemon-reload && sudo systemctl enable --now camera-recorder
+[Unit]
+Description=Camera Recording API (RK3588)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/camera-recorder
+Environment=CAMERA_RECORDER_CONFIG=/opt/camera-recorder/config.yaml
+ExecStart=/opt/camera-recorder/.venv/bin/python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
+Restart=always
+RestartSec=3
+# 12 路时每路独立进程，可在这里限制总资源
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>camera_server NVR 管理台</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div id="login" class="login-overlay" style="display:none">
+  <div class="login-box">
+    <h2>camera_server NVR</h2>
+    <p class="hint">后端鉴权失败，请输入 API Key</p>
+    <input id="loginKey" type="password" placeholder="API Key">
+    <button onclick="doLogin()">登 录</button>
+    <div class="err" id="loginErr"></div>
+  </div>
+</div>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="logo" id="logoName">camera_server NVR</div>
+    <nav>
+      <a href="#live" data-page="live" class="active">实时预览</a>
+      <a href="#playback" data-page="playback">录像回放</a>
+      <a href="#photos" data-page="photos">图片浏览</a>
+      <a href="#camera" data-page="camera">相机配置</a>
+      <a href="#storage" data-page="storage">存储管理</a>
+      <a href="#system" data-page="system">系统设置</a>
+      <a href="#onvif" data-page="onvif">ONVIF</a>
+    </nav>
+    <div class="side-foot">
+      <div id="clock"></div>
+      <div id="netStat" class="hint">--</div>
+    </div>
+  </aside>
+
+  <main>
+    <header class="topbar"><h1 id="pageTitle">实时预览</h1>
+      <span class="hint" id="srvStat"></span></header>
+
+    <section id="page-live" class="page active">
+      <div class="toolbar"><button onclick="live.refresh()">刷新</button>
+        <span class="hint">实时视频流（MJPEG，浏览器原生播放；失败自动降级快照）</span></div>
+      <div id="liveGrid" class="grid"></div>
+    </section>
+
+    <section id="page-playback" class="page">
+      <div class="toolbar">
+        <select id="pbCam" onchange="pb.load()"></select>
+        <input type="date" id="pbDate" onchange="pb.load()">
+        <button onclick="pb.load()">查询</button>
+      </div>
+      <div class="pb-wrap">
+        <div class="pb-list" id="pbList"></div>
+        <div class="pb-player">
+          <video id="pbVideo" controls></video>
+          <div class="hint">浏览器直接播放（分段 MP4，支持拖动进度）</div>
+          <div class="hint" id="pbMsg"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="page-photos" class="page">
+      <div class="toolbar">
+        <select id="phCam" onchange="ph.load()"></select>
+        <select id="phTag" onchange="ph.go(1)"><option value="">全部标签</option></select>
+        <button onclick="ph.load()">刷新</button>
+        <span class="hint" id="phInfo"></span>
+      </div>
+      <div id="phGrid" class="grid"></div>
+      <div class="toolbar" id="phPages"></div>
+    </section>
+
+    <section id="page-camera" class="page">
+      <div class="toolbar">
+        <select id="camSel" onchange="cam.load()"></select>
+        <button class="ghost" onclick="cam.refreshList()">刷 新</button>
+        <button onclick="cam.openAdd()">添加相机</button>
+        <button class="stop" onclick="cam.del()">删除相机</button>
+        <span class="hint" id="camToolMsg"></span>
+      </div>
+      <div class="cfg-wrap">
+        <div class="cfg-card">
+          <h3>录像参数</h3>
+          <label>名称 <input id="cfgName"></label>
+          <label>分辨率 <select id="cfgRes"><option value="640x360">640x360</option><option value="1280x720" selected>1280x720</option><option value="1920x1080">1920x1080</option><option value="2560x1440">2560x1440</option></select></label>
+          <label>帧率 <input id="cfgFps" type="number" min="1" max="60"></label>
+          <label>码率(kbps) <input id="cfgBitrate" type="number" min="100"></label>
+          <label>GOP(关键帧间隔) <input id="cfgGop" type="number" min="1"></label>
+          <label>输入格式 <select id="cfgFmt"><option value="mjpeg">MJPEG</option><option value="h264">H.264 直出</option><option value="yuy2">YUY2</option></select></label>
+          <button onclick="cam.save()">保存并应用</button> <span class="hint" id="cfgMsg"></span>
+        </div>
+        <div class="cfg-card">
+          <h3>图像参数（V4L2 控件）</h3>
+          <div id="ctlList"><span class="hint">相机在线时自动加载（亮度/对比度/饱和度等）</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="page-storage" class="page">
+      <div class="cfg-card wide">
+        <h3>存储状态</h3>
+        <div id="stgBar" class="bar"><div id="stgFill" class="bar-fill"></div></div>
+        <div class="kv" id="stgKv"></div>
+      </div>
+      <div class="cfg-card wide"><h3>录像统计</h3><div id="stgPerCam"></div></div>
+      <div class="cfg-card wide"><h3>数据清理（二次确认）</h3>
+        <div class="row">
+          <button class="stop" onclick="stg.clear('recordings')">清空录像</button>
+          <button class="stop" onclick="stg.clear('all')">清空全部（录像+照片）</button>
+          <span class="hint" id="clearMsg"></span>
+        </div>
+        <p class="hint">清空后录像文件与索引将被永久删除，无法恢复；录像会自动继续。</p>
+      </div>
+    </section>
+
+    <section id="page-system" class="page">
+      <div class="cfg-card wide"><h3>服务控制</h3>
+        <div class="kv" id="svcInfo"></div>
+        <div class="row" style="margin-top:8px">
+          <button onclick="sys.service('start')">启 动</button>
+          <button class="stop" onclick="sys.service('stop')">停 止</button>
+          <button onclick="sys.service('restart')">重 启</button>
+          <button class="ghost" onclick="sys.refresh()">刷新状态</button>
+          <span class="hint" id="svcMsg"></span>
+        </div>
+      </div>
+      <div class="cfg-card wide"><h3>NVR 名称 / 调试</h3>
+        <label>左上角显示名称 <input id="nvrName" maxlength="32" placeholder="camera_server NVR"></label>
+        <label style="display:flex;align-items:center;gap:8px;margin-top:8px">
+          <input type="checkbox" id="restPublic" style="width:auto">
+          启用免鉴权 RESTful 接口（调试用，跳过 API Key 校验）
+        </label>
+        <div class="row" style="margin-top:8px">
+          <button onclick="sys.saveName()">保 存</button>
+          <span class="hint" id="nameMsg"></span>
+        </div>
+      </div>
+      <div class="cfg-card wide"><h3>运行日志</h3>
+        <div class="kv" id="oplog"></div>
+        <div class="hint" id="oplogInfo"></div>
+      </div>
+      <div class="cfg-card wide"><h3>设备信息</h3><div class="kv" id="sysInfo"></div></div>
+    </section>
+
+    <section id="page-onvif" class="page">
+      <div class="cfg-card wide"><h3>ONVIF 服务</h3><div class="kv" id="onvifInfo"></div>
+        <label><input type="checkbox" id="onvifEnabled"> 启用 ONVIF</label><br>
+        <label><input type="checkbox" id="onvifDisc"> 启用 WS-Discovery（局域网自动发现）</label><br>
+        <button onclick="onvif.save()">应用</button> <span class="hint" id="onvifMsg"></span>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- 添加相机弹窗 -->
+<div id="addModal" class="modal" style="display:none">
+  <div class="modal-box">
+    <h3>添加相机（选择检测到的 USB 设备）</h3>
+    <div class="hint">刷新以重新扫描；点击"添加"即注册该相机并开始录像</div>
+    <div id="discoverList"></div>
+    <div class="row" style="margin-top:10px">
+      <button class="ghost" onclick="cam.refreshDiscover()">重新扫描</button>
+      <button class="ghost" onclick="cam.closeAdd()">关 闭</button>
+      <span class="hint" id="addMsg"></span>
+    </div>
+  </div>
+</div>
+
+<script src="/app.js"></script>
+</body></html>
